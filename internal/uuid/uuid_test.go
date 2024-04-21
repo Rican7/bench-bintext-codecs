@@ -56,7 +56,6 @@ func benchCodec(b *testing.B, encode encodeFunc, decode decodeFunc) {
 	encodedIDs := make([]string, len(ids))
 
 	b.Run("Encode", func(b *testing.B) {
-		b.ResetTimer() // TODO?
 		for range b.N {
 			for i, id := range ids {
 				encoded, err := encode(id)
@@ -70,7 +69,6 @@ func benchCodec(b *testing.B, encode encodeFunc, decode decodeFunc) {
 	})
 
 	b.Run("Decode", func(b *testing.B) {
-		b.ResetTimer() // TODO?
 		for range b.N {
 			for _, encodedID := range encodedIDs {
 				_, err := decode(encodedID)
