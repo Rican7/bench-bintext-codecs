@@ -49,59 +49,136 @@ func Generate(num int) ([]uuid.UUID, error) {
 	return generated, nil
 }
 
-func BenchmarkEncodeDefaultString(b *testing.B) {
-	for range b.N {
-		for _, id := range ids {
-			id.String()
+type encodeFunc func(id uuid.UUID) (string, error)
+type decodeFunc func(encoded string) (uuid.UUID, error)
+
+func benchCodec(b *testing.B, encode encodeFunc, decode decodeFunc) {
+	encodedIDs := make([]string, len(ids))
+
+	b.Run("Encode", func(b *testing.B) {
+		b.ResetTimer() // TODO?
+		for range b.N {
+			for i, id := range ids {
+				encoded, err := encode(id)
+				if err != nil {
+					b.Error(err)
+				}
+
+				encodedIDs[i] = encoded
+			}
 		}
-	}
+	})
+
+	b.Run("Decode", func(b *testing.B) {
+		b.ResetTimer() // TODO?
+		for range b.N {
+			for _, encodedID := range encodedIDs {
+				_, err := decode(encodedID)
+				if err != nil {
+					b.Error(err)
+				}
+			}
+		}
+	})
 }
 
-func BenchmarkEncodeBase64StdString(b *testing.B) {
-	for range b.N {
-		for _, id := range ids {
-			base64.StdEncoding.EncodeToString(id[:])
-		}
-	}
+func BenchmarkDefaultString(b *testing.B) {
+	benchCodec(
+		b,
+		func(id uuid.UUID) (string, error) {
+			return id.String(), nil
+		},
+		func(encoded string) (uuid.UUID, error) {
+			return uuid.Parse(encoded)
+		},
+	)
 }
 
-func BenchmarkEncodeBase32StdString(b *testing.B) {
-	for range b.N {
-		for _, id := range ids {
-			base32.StdEncoding.EncodeToString(id[:])
-		}
-	}
+func BenchmarkBase64StdString(b *testing.B) {
+	benchCodec(
+		b,
+		func(id uuid.UUID) (string, error) {
+			return base64.StdEncoding.EncodeToString(id[:]), nil
+		},
+		func(encoded string) (uuid.UUID, error) {
+			raw, err := base64.StdEncoding.DecodeString(encoded)
+			if err != nil {
+				return uuid.Nil, err
+			}
+
+			return uuid.FromBytes(raw)
+		},
+	)
 }
 
-func BenchmarkEncodeShortUUIDV3String(b *testing.B) {
-	for range b.N {
-		for _, id := range ids {
-			shortuuidv3.DefaultEncoder.Encode(id)
-		}
-	}
+func BenchmarkBase32StdString(b *testing.B) {
+	benchCodec(
+		b,
+		func(id uuid.UUID) (string, error) {
+			return base32.StdEncoding.EncodeToString(id[:]), nil
+		},
+		func(encoded string) (uuid.UUID, error) {
+			raw, err := base32.StdEncoding.DecodeString(encoded)
+			if err != nil {
+				return uuid.Nil, err
+			}
+
+			return uuid.FromBytes(raw)
+		},
+	)
 }
 
-func BenchmarkEncodeShortUUIDV4String(b *testing.B) {
-	for range b.N {
-		for _, id := range ids {
-			shortuuidv4.DefaultEncoder.Encode(id)
-		}
-	}
+func BenchmarkShortUUIDV3String(b *testing.B) {
+	benchCodec(
+		b,
+		func(id uuid.UUID) (string, error) {
+			return shortuuidv3.DefaultEncoder.Encode(id), nil
+		},
+		func(encoded string) (uuid.UUID, error) {
+			return shortuuidv3.DefaultEncoder.Decode(encoded)
+		},
+	)
 }
 
-func BenchmarkEncodeULIDV2CrockfordBase32String(b *testing.B) {
-	for range b.N {
-		for _, id := range ids {
+func BenchmarkShortUUIDV4String(b *testing.B) {
+	benchCodec(
+		b,
+		func(id uuid.UUID) (string, error) {
+			return shortuuidv4.DefaultEncoder.Encode(id), nil
+		},
+		func(encoded string) (uuid.UUID, error) {
+			return shortuuidv4.DefaultEncoder.Decode(encoded)
+		},
+	)
+}
+
+func BenchmarkULIDV2CrockfordBase32String(b *testing.B) {
+	benchCodec(
+		b,
+		func(id uuid.UUID) (string, error) {
 			// ULID and UUIDs are compatible 16 byte arrays
-			ulid.ULID(id).String()
-		}
-	}
+			return ulid.ULID(id).String(), nil
+		},
+		func(encoded string) (uuid.UUID, error) {
+			// ULID and UUIDs are compatible 16 byte arrays
+			ulid := &ulid.ULID{}
+			err := ulid.Scan(encoded)
+
+			return uuid.UUID(*ulid), err
+		},
+	)
 }
 
-func BenchmarkEncodeBTCBase58String(b *testing.B) {
-	for range b.N {
-		for _, id := range ids {
-			base58.Encode(id[:])
-		}
-	}
+func BenchmarkBTCBase58String(b *testing.B) {
+	benchCodec(
+		b,
+		func(id uuid.UUID) (string, error) {
+			return base58.Encode(id[:]), nil
+		},
+		func(encoded string) (uuid.UUID, error) {
+			raw := base58.Decode(encoded)
+
+			return uuid.FromBytes(raw)
+		},
+	)
 }
