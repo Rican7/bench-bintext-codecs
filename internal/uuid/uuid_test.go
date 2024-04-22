@@ -13,6 +13,7 @@ import (
 	shortuuidv3 "github.com/lithammer/shortuuid/v3"
 	shortuuidv4 "github.com/lithammer/shortuuid/v4"
 	"github.com/oklog/ulid/v2"
+	typeidbase32 "go.jetpack.io/typeid/base32"
 )
 
 var (
@@ -163,6 +164,23 @@ func BenchmarkULIDV2CrockfordBase32String(b *testing.B) {
 			err := ulid.Scan(encoded)
 
 			return uuid.UUID(*ulid), err
+		},
+	)
+}
+
+func BenchmarkTypeIDCrockfordBase32String(b *testing.B) {
+	benchCodec(
+		b,
+		func(id uuid.UUID) (string, error) {
+			return typeidbase32.Encode(id), nil
+		},
+		func(encoded string) (uuid.UUID, error) {
+			raw, err := typeidbase32.Decode(encoded)
+			if err != nil {
+				return uuid.Nil, err
+			}
+
+			return uuid.FromBytes(raw)
 		},
 	)
 }
