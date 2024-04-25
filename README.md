@@ -24,22 +24,22 @@ goos: linux
 goarch: amd64
 pkg: github.com/Rican7/bench-bintext-codecs/internal/uuid
 cpu: AMD Ryzen 9 3900X 12-Core Processor
-BenchmarkDefaultString/Encode-24                          207656              5344 ns/op            4800 B/op        100 allocs/op
-BenchmarkDefaultString/Decode-24                          429649              2839 ns/op               0 B/op          0 allocs/op
-BenchmarkBase64StdString/Encode-24                        168640              6570 ns/op            4800 B/op        200 allocs/op
-BenchmarkBase64StdString/Decode-24                        208429              5532 ns/op            2400 B/op        100 allocs/op
-BenchmarkBase32StdString/Encode-24                        149569              7206 ns/op            6400 B/op        200 allocs/op
-BenchmarkBase32StdString/Decode-24                        119950              9964 ns/op            3200 B/op        100 allocs/op
-BenchmarkShortUUIDV3String/Encode-24                        2240            492481 ns/op          268081 B/op      11242 allocs/op
-BenchmarkShortUUIDV3String/Decode-24                        2656            430707 ns/op           41081 B/op       3609 allocs/op
-BenchmarkShortUUIDV4String/Encode-24                        2659            437826 ns/op          263377 B/op       9744 allocs/op
-BenchmarkShortUUIDV4String/Decode-24                        6204            180970 ns/op           18354 B/op        800 allocs/op
-BenchmarkULIDV2CrockfordBase32String/Encode-24            249980              4540 ns/op            3200 B/op        100 allocs/op
-BenchmarkULIDV2CrockfordBase32String/Decode-24            746518              1623 ns/op               0 B/op          0 allocs/op
-BenchmarkTypeIDCrockfordBase32String/Encode-24            262449              4361 ns/op            3200 B/op        100 allocs/op
-BenchmarkTypeIDCrockfordBase32String/Decode-24            261058              4391 ns/op            1600 B/op        100 allocs/op
-BenchmarkBTCBase58String/Encode-24                          8098            136950 ns/op           31640 B/op       2565 allocs/op
-BenchmarkBTCBase58String/Decode-24                         10000            111665 ns/op           20000 B/op        800 allocs/op
+BenchmarkDefaultString/Encode-24                          217360              5271 ns/op            4800 B/op        100 allocs/op
+BenchmarkDefaultString/Decode-24                          423742              2899 ns/op               0 B/op          0 allocs/op
+BenchmarkBase64Std/Encode-24                              180175              6581 ns/op            4800 B/op        200 allocs/op
+BenchmarkBase64Std/Decode-24                              211950              5552 ns/op            2400 B/op        100 allocs/op
+BenchmarkBase32Std/Encode-24                              164416              7405 ns/op            6400 B/op        200 allocs/op
+BenchmarkBase32Std/Decode-24                              117444              9901 ns/op            3200 B/op        100 allocs/op
+BenchmarkShortUUIDV3/Encode-24                              2406            487583 ns/op          268537 B/op      11269 allocs/op
+BenchmarkShortUUIDV3/Decode-24                              2546            457102 ns/op           40987 B/op       3603 allocs/op
+BenchmarkShortUUIDV4/Encode-24                              2578            442245 ns/op          263753 B/op       9769 allocs/op
+BenchmarkShortUUIDV4/Decode-24                              6205            182044 ns/op           18466 B/op        800 allocs/op
+BenchmarkULIDV2CrockfordBase32/Encode-24                  235040              4657 ns/op            3200 B/op        100 allocs/op
+BenchmarkULIDV2CrockfordBase32/Decode-24                  738193              1620 ns/op               0 B/op          0 allocs/op
+BenchmarkTypeIDCrockfordBase32/Encode-24                  263750              4364 ns/op            3200 B/op        100 allocs/op
+BenchmarkTypeIDCrockfordBase32/Decode-24                  265795              4389 ns/op            1600 B/op        100 allocs/op
+BenchmarkBTCBase58/Encode-24                                7982            138216 ns/op           31776 B/op       2572 allocs/op
+BenchmarkBTCBase58/Decode-24                                9816            112937 ns/op           20000 B/op        800 allocs/op
 PASS
-ok      github.com/Rican7/bench-bintext-codecs/internal/uuid    19.046s
+ok      github.com/Rican7/bench-bintext-codecs/internal/uuid    19.319s
 ```

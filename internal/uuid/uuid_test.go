@@ -93,7 +93,7 @@ func BenchmarkDefaultString(b *testing.B) {
 	)
 }
 
-func BenchmarkBase64StdString(b *testing.B) {
+func BenchmarkBase64Std(b *testing.B) {
 	benchCodec(
 		b,
 		func(id uuid.UUID) (string, error) {
@@ -110,7 +110,7 @@ func BenchmarkBase64StdString(b *testing.B) {
 	)
 }
 
-func BenchmarkBase32StdString(b *testing.B) {
+func BenchmarkBase32Std(b *testing.B) {
 	benchCodec(
 		b,
 		func(id uuid.UUID) (string, error) {
@@ -127,7 +127,7 @@ func BenchmarkBase32StdString(b *testing.B) {
 	)
 }
 
-func BenchmarkShortUUIDV3String(b *testing.B) {
+func BenchmarkShortUUIDV3(b *testing.B) {
 	benchCodec(
 		b,
 		func(id uuid.UUID) (string, error) {
@@ -139,7 +139,7 @@ func BenchmarkShortUUIDV3String(b *testing.B) {
 	)
 }
 
-func BenchmarkShortUUIDV4String(b *testing.B) {
+func BenchmarkShortUUIDV4(b *testing.B) {
 	benchCodec(
 		b,
 		func(id uuid.UUID) (string, error) {
@@ -151,7 +151,7 @@ func BenchmarkShortUUIDV4String(b *testing.B) {
 	)
 }
 
-func BenchmarkULIDV2CrockfordBase32String(b *testing.B) {
+func BenchmarkULIDV2CrockfordBase32(b *testing.B) {
 	benchCodec(
 		b,
 		func(id uuid.UUID) (string, error) {
@@ -168,7 +168,7 @@ func BenchmarkULIDV2CrockfordBase32String(b *testing.B) {
 	)
 }
 
-func BenchmarkTypeIDCrockfordBase32String(b *testing.B) {
+func BenchmarkTypeIDCrockfordBase32(b *testing.B) {
 	benchCodec(
 		b,
 		func(id uuid.UUID) (string, error) {
@@ -185,7 +185,7 @@ func BenchmarkTypeIDCrockfordBase32String(b *testing.B) {
 	)
 }
 
-func BenchmarkBTCBase58String(b *testing.B) {
+func BenchmarkBTCBase58(b *testing.B) {
 	benchCodec(
 		b,
 		func(id uuid.UUID) (string, error) {
