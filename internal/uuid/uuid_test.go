@@ -16,6 +16,10 @@ import (
 	typeidbase32 "go.jetpack.io/typeid/base32"
 )
 
+const (
+	crockford32Alphabet = "0123456789ABCDEFGHJKMNPQRSTVWXYZ"
+)
+
 var (
 	ids []uuid.UUID
 )
@@ -54,6 +58,8 @@ type encodeFunc func(id uuid.UUID) (string, error)
 type decodeFunc func(encoded string) (uuid.UUID, error)
 
 func benchCodec(b *testing.B, encode encodeFunc, decode decodeFunc) {
+	b.Helper()
+
 	encodedIDs := make([]string, len(ids))
 
 	b.Run("Encode", func(b *testing.B) {
@@ -110,6 +116,25 @@ func BenchmarkBase64Std(b *testing.B) {
 	)
 }
 
+func BenchmarkBase64RawURLPrePadded(b *testing.B) {
+	benchCodec(
+		b,
+		func(id uuid.UUID) (string, error) {
+			frontPadded := append([]byte{0, 0}, id[:]...)
+
+			return base64.RawURLEncoding.EncodeToString(frontPadded)[2:], nil
+		},
+		func(encoded string) (uuid.UUID, error) {
+			raw, err := base64.RawURLEncoding.DecodeString(encoded)
+			if err != nil {
+				return uuid.Nil, err
+			}
+
+			return uuid.FromBytes(raw)
+		},
+	)
+}
+
 func BenchmarkBase32Std(b *testing.B) {
 	benchCodec(
 		b,
@@ -127,26 +152,44 @@ func BenchmarkBase32Std(b *testing.B) {
 	)
 }
 
-func BenchmarkShortUUIDV3(b *testing.B) {
+func BenchmarkBase32HexPrePadded(b *testing.B) {
+	encoding := base32.HexEncoding.WithPadding(base32.NoPadding)
+
 	benchCodec(
 		b,
 		func(id uuid.UUID) (string, error) {
-			return shortuuidv3.DefaultEncoder.Encode(id), nil
+			frontPadded := append([]byte{0, 0, 0, 0}, id[:]...)
+
+			return encoding.EncodeToString(frontPadded)[6:], nil
 		},
 		func(encoded string) (uuid.UUID, error) {
-			return shortuuidv3.DefaultEncoder.Decode(encoded)
+			raw, err := encoding.DecodeString(encoded)
+			if err != nil {
+				return uuid.Nil, err
+			}
+
+			return uuid.FromBytes(raw)
 		},
 	)
 }
 
-func BenchmarkShortUUIDV4(b *testing.B) {
+func BenchmarkStdLibCrockfordBase32(b *testing.B) {
+	encoding := base32.NewEncoding(crockford32Alphabet).WithPadding(base32.NoPadding)
+
 	benchCodec(
 		b,
 		func(id uuid.UUID) (string, error) {
-			return shortuuidv4.DefaultEncoder.Encode(id), nil
+			frontPadded := append([]byte{0, 0, 0, 0}, id[:]...)
+
+			return encoding.EncodeToString(frontPadded)[6:], nil
 		},
 		func(encoded string) (uuid.UUID, error) {
-			return shortuuidv4.DefaultEncoder.Decode(encoded)
+			raw, err := encoding.DecodeString(encoded)
+			if err != nil {
+				return uuid.Nil, err
+			}
+
+			return uuid.FromBytes(raw)
 		},
 	)
 }
@@ -181,6 +224,30 @@ func BenchmarkTypeIDCrockfordBase32(b *testing.B) {
 			}
 
 			return uuid.FromBytes(raw)
+		},
+	)
+}
+
+func BenchmarkShortUUIDV3(b *testing.B) {
+	benchCodec(
+		b,
+		func(id uuid.UUID) (string, error) {
+			return shortuuidv3.DefaultEncoder.Encode(id), nil
+		},
+		func(encoded string) (uuid.UUID, error) {
+			return shortuuidv3.DefaultEncoder.Decode(encoded)
+		},
+	)
+}
+
+func BenchmarkShortUUIDV4(b *testing.B) {
+	benchCodec(
+		b,
+		func(id uuid.UUID) (string, error) {
+			return shortuuidv4.DefaultEncoder.Encode(id), nil
+		},
+		func(encoded string) (uuid.UUID, error) {
+			return shortuuidv4.DefaultEncoder.Decode(encoded)
 		},
 	)
 }
